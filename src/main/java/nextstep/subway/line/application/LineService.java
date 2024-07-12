@@ -20,7 +20,7 @@ public class LineService {
   public Line saveLine(CreateLineRequest request) {
     Line line = lineAppender.append(request.toLine());
     LineSection lineSection = lineSectionMapper.map(request.toAddLineSection());
-    line.appendLineSection(lineSection);
+    line.addLineSection(lineSection);
     return line;
   }
 

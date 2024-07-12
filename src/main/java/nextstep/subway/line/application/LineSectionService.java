@@ -19,7 +19,7 @@ public class LineSectionService {
   public Line appendLineSection(Long lineId, AppendLineSectionRequest request) {
     Line line = lineReader.readById(lineId);
     LineSection lineSection = lineSectionMapper.map(request);
-    line.appendLineSection(lineSection);
+    line.addLineSection(lineSection);
     return line;
   }
 

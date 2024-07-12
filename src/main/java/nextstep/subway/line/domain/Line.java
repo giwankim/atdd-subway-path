@@ -30,7 +30,7 @@ public class Line {
     this.id = id;
     this.name = name;
     this.color = color;
-    this.lineSections.appendAll(lineSections);
+    this.lineSections.addAll(lineSections);
   }
 
   public Line(String name, String color, LineSection... lineSections) {
@@ -49,8 +49,8 @@ public class Line {
     this.color = color;
   }
 
-  public void appendLineSection(LineSection lineSection) {
-    lineSections.append(lineSection);
+  public void addLineSection(LineSection lineSection) {
+    lineSections.add(lineSection);
   }
 
   public List<Station> getStations() {

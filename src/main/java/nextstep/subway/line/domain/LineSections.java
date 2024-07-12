@@ -57,13 +57,13 @@ public class LineSections {
     return sections.get(sections.size() - 1);
   }
 
-  public void append(LineSection lineSection) {
+  public void add(LineSection lineSection) {
     validateAppend(lineSection);
     sections.add(lineSection);
   }
 
-  public void appendAll(LineSections lineSections) {
-    this.sections.addAll(lineSections.sections);
+  public void addAll(LineSections lineSections) {
+    lineSections.sections.forEach(this::add);
   }
 
   public List<Station> getStations() {
@@ -94,7 +94,7 @@ public class LineSections {
   }
 
   private boolean isAppendable(LineSection lineSection) {
-    return getLast().getDownStation().isSame(lineSection.getUpStation());
+    return isTerminalStation(lineSection.getUpStation());
   }
 
   private boolean isAppendResultInCycle(LineSection lineSection) {
