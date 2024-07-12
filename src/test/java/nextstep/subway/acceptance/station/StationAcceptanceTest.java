@@ -1,6 +1,6 @@
 package nextstep.subway.acceptance.station;
 
-import static nextstep.subway.acceptance.station.StationAcceptanceSteps.*;
+import static nextstep.subway.acceptance.station.steps.StationAcceptanceSteps.*;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 
+@SuppressWarnings("NonAsciiCharacters")
 @DisplayName("지하철역 관련 기능")
 class StationAcceptanceTest extends AcceptanceTest {
   /** When 지하철역을 생성하면 Then 지하철역이 생성된다 Then 지하철역 목록 조회 시 생성한 역을 찾을 수 있다 */

@@ -1,6 +1,6 @@
-package nextstep.subway.acceptance.line;
+package nextstep.subway.acceptance.line.steps;
 
-import static nextstep.subway.acceptance.line.LineAcceptanceSteps.지하철_노선_조회_요청;
+import static nextstep.subway.acceptance.line.steps.LineAcceptanceSteps.지하철_노선_조회_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.RestAssured;
@@ -11,6 +11,7 @@ import nextstep.subway.line.domain.Line;
 import nextstep.subway.station.domain.Station;
 import org.springframework.http.HttpStatus;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class RemoveLineSectionSteps {
   private RemoveLineSectionSteps() {}
 

@@ -1,6 +1,6 @@
 package nextstep.subway.acceptance.line;
 
-import static nextstep.subway.acceptance.line.LineAcceptanceSteps.*;
+import static nextstep.subway.acceptance.line.steps.LineAcceptanceSteps.*;
 import static nextstep.subway.support.Fixtures.*;
 
 import io.restassured.response.ExtractableResponse;
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
+@SuppressWarnings("NonAsciiCharacters")
 @DisplayName("지하철 노선 관리 기능")
 class LineAcceptanceTest extends AcceptanceTest {
   @Autowired private StationRepository stationRepository;
@@ -24,17 +25,17 @@ class LineAcceptanceTest extends AcceptanceTest {
   @BeforeEach
   protected void setUp() {
     super.setUp();
-    stationRepository.save(gangnam());
-    stationRepository.save(yeoksam());
-    stationRepository.save(seolleung());
-    stationRepository.save(pangyo());
+    stationRepository.save(강남역());
+    stationRepository.save(역삼역());
+    stationRepository.save(선릉역());
+    stationRepository.save(판교역());
   }
 
   /** Given 새로운 지하철 노선 정보를 입력하고, When 관리자가 노선을 생성하면, Then 해당 노선이 생성되고 노선 목록에 포함된다. */
   @DisplayName("지하철 노선을 생성한다.")
   @Test
   void createLine() {
-    ExtractableResponse<Response> response = 지하철_노선_생성_요청(lineTwo());
+    ExtractableResponse<Response> response = 지하철_노선_생성_요청(이호선());
 
     지하철_노선_생성됨(response);
     지하철_노선_목록에_포함됨(지하철_노선_목록_조회_요청(), Collections.singletonList(response));
@@ -44,8 +45,8 @@ class LineAcceptanceTest extends AcceptanceTest {
   @DisplayName("지하철 노선 목록을 조회한다.")
   @Test
   void showLines() {
-    ExtractableResponse<Response> createLineTwoResponse = 지하철_노선_생성_요청(lineTwo());
-    ExtractableResponse<Response> createShinbundangResponse = 지하철_노선_생성_요청(shinbundang());
+    ExtractableResponse<Response> createLineTwoResponse = 지하철_노선_생성_요청(이호선());
+    ExtractableResponse<Response> createShinbundangResponse = 지하철_노선_생성_요청(신분당선());
 
     ExtractableResponse<Response> response = 지하철_노선_목록_조회_요청();
 
@@ -56,13 +57,13 @@ class LineAcceptanceTest extends AcceptanceTest {
   @DisplayName("지하철 노선을 조회한다.")
   @Test
   void showLine() {
-    Line line = lineTwo();
-    ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(line);
+    Line 이호선 = 이호선();
+    ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(이호선);
     String uri = createResponse.header(HttpHeaders.LOCATION);
 
     ExtractableResponse<Response> response = 지하철_노선_조회_요청(uri);
 
-    지하철_노선_조회됨(response, line);
+    지하철_노선_조회됨(response, 이호선);
   }
 
   /** Given: 특정 지하철 노선이 등록되어 있고, When: 관리자가 해당 노선을 수정하면, Then: 해당 노선의 정보가 수정된다. */
@@ -71,7 +72,7 @@ class LineAcceptanceTest extends AcceptanceTest {
   void updateLine() {
     String newName = "다른분당선";
     String newColor = "bg-orange-600";
-    ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(shinbundang());
+    ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(신분당선());
     String uri = createResponse.header(HttpHeaders.LOCATION);
 
     지하철_노선_수정_요청(uri, newName, newColor);
@@ -83,7 +84,7 @@ class LineAcceptanceTest extends AcceptanceTest {
   @DisplayName("지하철 노선을 삭제한다.")
   @Test
   void deleteLine() {
-    ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(lineTwo());
+    ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(이호선());
     String uri = createResponse.header(HttpHeaders.LOCATION);
 
     ExtractableResponse<Response> response = 지하철_삭제_요청(uri);

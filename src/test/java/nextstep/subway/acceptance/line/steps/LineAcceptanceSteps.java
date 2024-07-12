@@ -1,4 +1,4 @@
-package nextstep.subway.acceptance.line;
+package nextstep.subway.acceptance.line.steps;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class LineAcceptanceSteps {
   private LineAcceptanceSteps() {}
 

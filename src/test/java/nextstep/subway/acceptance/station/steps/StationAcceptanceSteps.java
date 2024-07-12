@@ -1,4 +1,4 @@
-package nextstep.subway.acceptance.station;
+package nextstep.subway.acceptance.station.steps;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,6 +11,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class StationAcceptanceSteps {
   private StationAcceptanceSteps() {}
 
