@@ -55,6 +55,10 @@ public class LineSections {
   }
 
   public void add(LineSection lineSection) {
+    if (isEmpty()) {
+      sections.add(lineSection);
+      return;
+    }
     if (getFirst().canPrepend(lineSection)) {
       sections.add(0, lineSection);
       return;

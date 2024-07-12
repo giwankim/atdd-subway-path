@@ -21,6 +21,21 @@ class LineSectionsTest {
   @DisplayName("지하철 구간 등록 기능")
   @Nested
   class AddTest {
+    @DisplayName("노선에 구간이 없는 경우 새 구간을 등록한다.")
+    @Test
+    void emptySections() {
+      LineSections sections = new LineSections();
+      LineSection section = LineSection.of(강남역, 역삼역, 10);
+
+      sections.add(section);
+
+      assertThat(sections.size()).isEqualTo(1);
+      LineSection firstSection = sections.getFirst();
+      assertThat(firstSection.getUpStation().isSame(section.getUpStation())).isTrue();
+      assertThat(firstSection.getDownStation().isSame(section.getDownStation())).isTrue();
+      assertThat(firstSection.getDistance()).isEqualTo(section.getDistance());
+    }
+
     @DisplayName("기존 구간 뒤에 새로운 구간을 추가한다.")
     @Test
     void append() {
