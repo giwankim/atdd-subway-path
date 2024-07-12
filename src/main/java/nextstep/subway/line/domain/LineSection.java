@@ -36,4 +36,16 @@ public class LineSection {
   public LineSection(Station upStation, Station downStation, int distance) {
     this(null, upStation, downStation, distance);
   }
+
+  public static LineSection of(Station upStation, Station downStation, int distance) {
+    return new LineSection(upStation, downStation, distance);
+  }
+
+  public boolean canPrepend(LineSection lineSection) {
+    return upStation.isSame(lineSection.downStation);
+  }
+
+  public boolean canAppend(LineSection lineSection) {
+    return downStation.isSame(lineSection.upStation);
+  }
 }
