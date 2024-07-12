@@ -30,7 +30,25 @@ class LineSectionsTest {
       sections.add(section);
 
       assertThat(sections.size()).isEqualTo(2);
-      assertThat(sections.getLast().isSame(section)).isTrue();
+      LineSection lastSection = sections.getLast();
+      assertThat(lastSection.getUpStation().isSame(section.getUpStation())).isTrue();
+      assertThat(lastSection.getDownStation().isSame(section.getDownStation())).isTrue();
+      assertThat(lastSection.getDistance()).isEqualTo(section.getDistance());
+    }
+
+    @DisplayName("기존 구간 앞에 새로운 구간을 추가한다.")
+    @Test
+    void prepend() {
+      LineSections sections = new LineSections(역삼역, 선릉역, 20);
+      LineSection section = LineSection.of(강남역, 역삼역, 10);
+
+      sections.add(section);
+
+      assertThat(sections.size()).isEqualTo(2);
+      LineSection firstSection = sections.getFirst();
+      assertThat(firstSection.getUpStation().isSame(section.getUpStation())).isTrue();
+      assertThat(firstSection.getDownStation().isSame(section.getDownStation())).isTrue();
+      assertThat(firstSection.getDistance()).isEqualTo(section.getDistance());
     }
   }
 }

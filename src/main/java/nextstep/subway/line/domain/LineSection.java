@@ -48,8 +48,4 @@ public class LineSection {
   public boolean canAppend(LineSection lineSection) {
     return downStation.isSame(lineSection.upStation);
   }
-
-  public boolean isSame(LineSection other) {
-    return id.equals(other.id);
-  }
 }
