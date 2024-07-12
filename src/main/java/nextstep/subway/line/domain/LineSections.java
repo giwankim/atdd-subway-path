@@ -1,9 +1,6 @@
 package nextstep.subway.line.domain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.*;
 import lombok.AccessLevel;
@@ -34,7 +31,7 @@ public class LineSections {
   }
 
   public LineSections(Station upStation, Station downStation, int distance) {
-    this(new LineSection(upStation, downStation, distance));
+    this(LineSection.of(upStation, downStation, distance));
   }
 
   public static LineSections of(Station upStation, Station downStation, int distance) {
