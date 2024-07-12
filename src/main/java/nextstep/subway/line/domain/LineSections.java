@@ -33,6 +33,14 @@ public class LineSections {
     this.sections.addAll(Arrays.asList(lineSections));
   }
 
+  public LineSections(Station upStation, Station downStation, int distance) {
+    this(new LineSection(upStation, downStation, distance));
+  }
+
+  public static LineSections of(Station upStation, Station downStation, int distance) {
+    return new LineSections(upStation, downStation, distance);
+  }
+
   public int size() {
     return sections.size();
   }

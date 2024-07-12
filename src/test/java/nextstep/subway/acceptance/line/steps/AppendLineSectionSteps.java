@@ -1,6 +1,6 @@
-package nextstep.subway.acceptance.line;
+package nextstep.subway.acceptance.line.steps;
 
-import static nextstep.subway.acceptance.line.LineAcceptanceSteps.지하철_노선_조회_요청;
+import static nextstep.subway.acceptance.line.steps.LineAcceptanceSteps.지하철_노선_조회_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.RestAssured;
@@ -13,6 +13,7 @@ import nextstep.subway.line.domain.LineSection;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class AppendLineSectionSteps {
   private AppendLineSectionSteps() {}
 
@@ -35,13 +36,29 @@ public class AppendLineSectionSteps {
         .extract();
   }
 
-  public static void 노선_구간_등록됨(
+  public static void 노선_첫_구간으로_등록됨(
+      ExtractableResponse<Response> response, Line line, LineSection lineSection) {
+    assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+    ExtractableResponse<Response> lineResponse = 지하철_노선_조회_요청("/lines/" + line.getId());
+    List<Long> stationIds = lineResponse.jsonPath().getList("stations.id", Long.class);
+    assertThat(stationIds.get(0)).isEqualTo(lineSection.getDownStation().getId());
+  }
+
+  public static void 노선_마지막_구간으로_등록됨(
       ExtractableResponse<Response> response, Line line, LineSection lineSection) {
     assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     ExtractableResponse<Response> lineResponse = 지하철_노선_조회_요청("/lines/" + line.getId());
     List<Long> stationIds = lineResponse.jsonPath().getList("stations.id", Long.class);
     assertThat(stationIds.get(stationIds.size() - 1))
         .isEqualTo(lineSection.getDownStation().getId());
+  }
+
+  public static void 노선_i변째_구간으로_등록됨(
+      ExtractableResponse<Response> response, Line line, LineSection lineSection, int i) {
+    assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+    ExtractableResponse<Response> lineResponse = 지하철_노선_조회_요청("/lines/" + line.getId());
+    List<Long> stationIds = lineResponse.jsonPath().getList("stations.id", Long.class);
+    assertThat(stationIds.get(i)).isEqualTo(lineSection.getDownStation().getId());
   }
 
   public static void 노선_구간_요청_실패함(ExtractableResponse<Response> response) {
