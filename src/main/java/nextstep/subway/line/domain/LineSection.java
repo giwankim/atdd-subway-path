@@ -48,4 +48,12 @@ public class LineSection {
   public boolean canAppend(LineSection lineSection) {
     return downStation.isSame(lineSection.upStation);
   }
+
+  public boolean canInsert(LineSection lineSection) {
+    if (lineSection.distance >= distance) {
+      return false;
+    }
+    return upStation.isSame(lineSection.getUpStation())
+        || downStation.isSame(lineSection.getDownStation());
+  }
 }
