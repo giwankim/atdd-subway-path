@@ -2,9 +2,12 @@ package nextstep.subway.unit.line.domain;
 
 import static nextstep.subway.support.Fixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.util.Arrays;
 import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.line.domain.LineSections;
+import nextstep.subway.line.exception.CycleNotAllowedException;
 import nextstep.subway.station.domain.Station;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,6 +36,7 @@ class LineSectionsTest {
       isSameSection(sections.getFirst(), section);
     }
 
+    @DisplayName("구간 상행역이 노선 하행 종점역과 같은 경우")
     @Nested
     class AppendTest {
       @DisplayName("기존 구간 뒤에 새로운 구간을 추가한다.")
@@ -46,8 +50,21 @@ class LineSectionsTest {
         assertThat(sections.size()).isEqualTo(2);
         isSameSection(sections.getLast(), section);
       }
+
+      @DisplayName("기존 구간 뒤에 새로운 구간을 추가할 때 이미 등록된 있는 역은 등록될 수 없다.")
+      @Test
+      void appendResultsInCycle() {
+        LineSections sections =
+            new LineSections(
+                Arrays.asList(LineSection.of(강남역, 역삼역, 10), LineSection.of(역삼역, 선릉역, 20)));
+        LineSection section = LineSection.of(선릉역, 역삼역, 30);
+
+        assertThatExceptionOfType(CycleNotAllowedException.class)
+            .isThrownBy(() -> sections.add(section));
+      }
     }
 
+    @DisplayName("구간 하행역이 노선 상행 종점역과 같은 경우")
     @Nested
     class PrependTest {
       @DisplayName("기존 구간 앞에 새로운 구간을 추가한다.")
@@ -60,6 +77,18 @@ class LineSectionsTest {
 
         assertThat(sections.size()).isEqualTo(2);
         isSameSection(sections.getFirst(), section);
+      }
+
+      @DisplayName("기존 구간 앞에 새로운 구간을 추가할 때 이미 등록된 있는 역은 등록될 수 없다.")
+      @Test
+      void prependResultsInCycle() {
+        LineSections sections =
+            new LineSections(
+                Arrays.asList(LineSection.of(강남역, 역삼역, 10), LineSection.of(역삼역, 선릉역, 20)));
+        LineSection section = LineSection.of(역삼역, 강남역, 30);
+
+        assertThatExceptionOfType(CycleNotAllowedException.class)
+            .isThrownBy(() -> sections.add(section));
       }
     }
   }

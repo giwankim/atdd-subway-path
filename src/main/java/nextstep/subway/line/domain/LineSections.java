@@ -60,11 +60,30 @@ public class LineSections {
       return;
     }
     if (getFirst().canPrepend(lineSection)) {
+      validatePrepend(lineSection);
       sections.add(0, lineSection);
       return;
     }
-    validateAppend(lineSection);
-    sections.add(lineSection);
+    if (getLast().canAppend(lineSection)) {
+      validateAppend(lineSection);
+      sections.add(lineSection);
+      return;
+    }
+    throw new LineSectionNotAppendableException();
+  }
+
+  private void validatePrepend(LineSection lineSection) {
+    validateAddResultInCycle(lineSection.getUpStation());
+  }
+
+  private void validateAddResultInCycle(Station stationToAdd) {
+    if (getStations().stream().anyMatch(station -> station.isSame(stationToAdd))) {
+      throw new CycleNotAllowedException();
+    }
+  }
+
+  private void validateAppend(LineSection lineSection) {
+    validateAddResultInCycle(lineSection.getDownStation());
   }
 
   public void addAll(LineSections lineSections) {
@@ -84,28 +103,6 @@ public class LineSections {
   public void removeLast(Station station) {
     validateRemove(station);
     sections.remove(sections.size() - 1);
-  }
-
-  private void validateAppend(LineSection lineSection) {
-    if (isEmpty()) {
-      return;
-    }
-    if (!isAppendable(lineSection)) {
-      throw new LineSectionNotAppendableException();
-    }
-    if (isAppendResultInCycle(lineSection)) {
-      throw new CycleNotAllowedException();
-    }
-  }
-
-  private boolean isAppendable(LineSection lineSection) {
-    return isTerminalStation(lineSection.getUpStation());
-  }
-
-  private boolean isAppendResultInCycle(LineSection lineSection) {
-    List<Station> stations = getStations();
-    Station downStation = lineSection.getDownStation();
-    return stations.stream().anyMatch(station -> station.isSame(downStation));
   }
 
   private void validateRemove(Station station) {
