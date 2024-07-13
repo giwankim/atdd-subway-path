@@ -60,30 +60,25 @@ public class LineSections {
       return;
     }
     if (getFirst().canPrepend(lineSection)) {
-      validatePrepend(lineSection);
-      sections.add(0, lineSection);
+      add(lineSection, 0, lineSection.getUpStation());
       return;
     }
     if (getLast().canAppend(lineSection)) {
-      validateAppend(lineSection);
-      sections.add(lineSection);
+      add(lineSection, sections.size(), lineSection.getDownStation());
       return;
     }
     throw new LineSectionNotAppendableException();
   }
 
-  private void validatePrepend(LineSection lineSection) {
-    validateAddResultInCycle(lineSection.getUpStation());
+  private void add(LineSection lineSection, int index, Station station) {
+    validateAddResultInCycle(station);
+    sections.add(index, lineSection);
   }
 
   private void validateAddResultInCycle(Station stationToAdd) {
     if (getStations().stream().anyMatch(station -> station.isSame(stationToAdd))) {
       throw new CycleNotAllowedException();
     }
-  }
-
-  private void validateAppend(LineSection lineSection) {
-    validateAddResultInCycle(lineSection.getDownStation());
   }
 
   public void addAll(LineSections lineSections) {

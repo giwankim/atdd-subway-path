@@ -1,4 +1,4 @@
-package nextstep.subway.unit.line;
+package nextstep.subway.unit.line.application;
 
 import nextstep.subway.line.application.LineService;
 import nextstep.subway.line.domain.LineRepository;
@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-public class LineServiceTest {
+class LineServiceTest {
   @Autowired private StationRepository stationRepository;
   @Autowired private LineRepository lineRepository;
 

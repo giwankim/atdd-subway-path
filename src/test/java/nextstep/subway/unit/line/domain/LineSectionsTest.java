@@ -91,6 +91,22 @@ class LineSectionsTest {
             .isThrownBy(() -> sections.add(section));
       }
     }
+
+    @DisplayName("노선 가운데 역을 추가 할 수 있는 경우")
+    @Nested
+    class InsertTest {
+      @DisplayName("노선에 역 추가시 노선 가운데 추가 할 수 있다.")
+      @Test
+      void insertUpStationSame() {
+        LineSections sections = new LineSections(강남역, 선릉역, 10);
+        LineSection section = LineSection.of(강남역, 역삼역, 30);
+
+        sections.add(section);
+
+        assertThat(sections.size()).isEqualTo(2);
+        isSameSection(sections.getFirst(), section);
+      }
+    }
   }
 
   private static void isSameSection(LineSection thisSection, LineSection otherSection) {
