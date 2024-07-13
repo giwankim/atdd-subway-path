@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.station.domain.Station;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -44,10 +43,26 @@ class LineSectionTest {
   @Test
   void canInsertShouldReturnFalse() {
     LineSection section = new LineSection(강남역, 선릉역, 30);
-    SoftAssertions.assertSoftly(softAssertions -> {
-      softAssertions.assertThat(section.canInsert(new LineSection(강남역, 역삼역, 40))).isFalse();
-      softAssertions.assertThat(section.canInsert(new LineSection(선릉역, 판교역, 50))).isFalse();
-      softAssertions.assertThat(section.canInsert(new LineSection(역삼역, 판교역, 20))).isFalse();
-    });
+    assertThat(section.canInsert(new LineSection(강남역, 역삼역, 40))).isFalse();
+    assertThat(section.canInsert(new LineSection(선릉역, 판교역, 50))).isFalse();
+    assertThat(section.canInsert(new LineSection(역삼역, 판교역, 20))).isFalse();
+  }
+
+  @DisplayName("상행역이 같은지 확인한다.")
+  @Test
+  void isSameUpStation() {
+    LineSection section = new LineSection(강남역, 역삼역, 10);
+    assertThat(section.isSameUpStation(LineSection.of(강남역, 판교역, 10))).isTrue();
+    assertThat(section.isSameUpStation(LineSection.of(역삼역, 선릉역, 10))).isFalse();
+    assertThat(section.isSameUpStation(LineSection.of(선릉역, 판교역, 10))).isFalse();
+  }
+
+  @DisplayName("하행역이 같은지 확인한다.")
+  @Test
+  void isSameDownStation() {
+    LineSection section = new LineSection(강남역, 역삼역, 10);
+    assertThat(section.isSameDownStation(LineSection.of(판교역, 역삼역, 10))).isTrue();
+    assertThat(section.isSameDownStation(LineSection.of(강남역, 판교역, 10))).isFalse();
+    assertThat(section.isSameDownStation(LineSection.of(선릉역, 판교역, 10))).isFalse();
   }
 }

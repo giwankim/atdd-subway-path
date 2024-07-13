@@ -53,7 +53,14 @@ public class LineSection {
     if (lineSection.distance >= distance) {
       return false;
     }
-    return upStation.isSame(lineSection.getUpStation())
-        || downStation.isSame(lineSection.getDownStation());
+    return isSameUpStation(lineSection) || isSameDownStation(lineSection);
+  }
+
+  public boolean isSameUpStation(LineSection lineSection) {
+    return upStation.isSame(lineSection.getUpStation());
+  }
+
+  public boolean isSameDownStation(LineSection lineSection) {
+    return downStation.isSame(lineSection.getDownStation());
   }
 }
