@@ -19,7 +19,6 @@ class LineSectionsTest {
   private final Station 강남역 = 강남역();
   private final Station 역삼역 = 역삼역();
   private final Station 선릉역 = 선릉역();
-  private final Station 판교역 = 판교역();
 
   @DisplayName("지하철 구간 등록 기능")
   @Nested
@@ -33,7 +32,7 @@ class LineSectionsTest {
       sections.add(section);
 
       assertThat(sections.size()).isEqualTo(1);
-      isSameSection(sections.getFirst(), section);
+      sections.getFirst().isSame(section);
     }
 
     @DisplayName("구간 상행역이 노선 하행 종점역과 같은 경우")
@@ -48,7 +47,7 @@ class LineSectionsTest {
         sections.add(section);
 
         assertThat(sections.size()).isEqualTo(2);
-        isSameSection(sections.getLast(), section);
+        sections.getLast().isSame(section);
       }
 
       @DisplayName("기존 구간 뒤에 새로운 구간을 추가할 때 이미 등록된 있는 역은 등록될 수 없다.")
@@ -76,7 +75,7 @@ class LineSectionsTest {
         sections.add(section);
 
         assertThat(sections.size()).isEqualTo(2);
-        isSameSection(sections.getFirst(), section);
+        sections.getFirst().isSame(section);
       }
 
       @DisplayName("기존 구간 앞에 새로운 구간을 추가할 때 이미 등록된 있는 역은 등록될 수 없다.")
@@ -95,23 +94,18 @@ class LineSectionsTest {
     @DisplayName("노선 가운데 역을 추가 할 수 있는 경우")
     @Nested
     class InsertTest {
-      @DisplayName("노선에 역 추가시 노선 가운데 추가 할 수 있다.")
+      @DisplayName("상행역이 같은 경우 가운데 구간의 하행역이 추가된다.")
       @Test
       void insertUpStationSame() {
-        LineSections sections = new LineSections(강남역, 선릉역, 10);
-        LineSection section = LineSection.of(강남역, 역삼역, 30);
+        LineSections sections = new LineSections(강남역, 선릉역, 30);
+        LineSection section = LineSection.of(강남역, 역삼역, 10);
 
         sections.add(section);
 
         assertThat(sections.size()).isEqualTo(2);
-        isSameSection(sections.getFirst(), section);
+        sections.getFirst().isSame(section);
+        sections.getLast().isSame(LineSection.of(역삼역, 선릉역, 20));
       }
     }
-  }
-
-  private static void isSameSection(LineSection thisSection, LineSection otherSection) {
-    assertThat(thisSection.getUpStation().isSame(otherSection.getUpStation())).isTrue();
-    assertThat(thisSection.getDownStation().isSame(otherSection.getDownStation())).isTrue();
-    assertThat(thisSection.getDistance()).isEqualTo(otherSection.getDistance());
   }
 }

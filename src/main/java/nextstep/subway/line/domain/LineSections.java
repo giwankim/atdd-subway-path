@@ -59,24 +59,32 @@ public class LineSections {
       sections.add(lineSection);
       return;
     }
-    if (getFirst().canPrepend(lineSection)) {
+    if (isPrepend(lineSection)) {
       add(lineSection, 0, lineSection.getUpStation());
       return;
     }
-    if (getLast().canAppend(lineSection)) {
+    if (isAppend(lineSection)) {
       add(lineSection, sections.size(), lineSection.getDownStation());
       return;
     }
     throw new LineSectionNotAppendableException();
   }
 
+  private boolean isPrepend(LineSection lineSection) {
+    return getFirst().canPrepend(lineSection);
+  }
+
+  private boolean isAppend(LineSection lineSection) {
+    return getLast().canAppend(lineSection);
+  }
+
   private void add(LineSection lineSection, int index, Station station) {
-    validateAddResultInCycle(station);
+    validateAddStation(station);
     sections.add(index, lineSection);
   }
 
-  private void validateAddResultInCycle(Station stationToAdd) {
-    if (getStations().stream().anyMatch(station -> station.isSame(stationToAdd))) {
+  private void validateAddStation(Station station) {
+    if (getStations().stream().anyMatch(it -> it.isSame(station))) {
       throw new CycleNotAllowedException();
     }
   }
