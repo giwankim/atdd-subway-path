@@ -59,12 +59,13 @@ public class LineSections {
       sections.add(lineSection);
       return;
     }
+    validateAdd(lineSection);
     if (isPrepend(lineSection)) {
-      add(lineSection, 0, lineSection.getUpStation());
+      sections.add(0, lineSection);
       return;
     }
     if (isAppend(lineSection)) {
-      add(lineSection, sections.size(), lineSection.getDownStation());
+      sections.add(lineSection);
       return;
     }
     throw new LineSectionNotAppendableException();
@@ -78,15 +79,16 @@ public class LineSections {
     return getLast().canAppend(lineSection);
   }
 
-  private void add(LineSection lineSection, int index, Station station) {
-    validateAddStation(station);
-    sections.add(index, lineSection);
-  }
-
-  private void validateAddStation(Station station) {
-    if (getStations().stream().anyMatch(it -> it.isSame(station))) {
+  private void validateAdd(LineSection lineSection) {
+    if (containsBothStations(lineSection)) {
       throw new CycleNotAllowedException();
     }
+  }
+
+  private boolean containsBothStations(LineSection lineSection) {
+    List<Station> stations = getStations();
+    return stations.stream().anyMatch(it -> it.isSame(lineSection.getUpStation()))
+        && stations.stream().anyMatch(it -> it.isSame(lineSection.getDownStation()));
   }
 
   public void addAll(LineSections lineSections) {
