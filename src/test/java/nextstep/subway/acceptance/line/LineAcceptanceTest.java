@@ -45,12 +45,12 @@ class LineAcceptanceTest extends AcceptanceTest {
   @DisplayName("지하철 노선 목록을 조회한다.")
   @Test
   void showLines() {
-    ExtractableResponse<Response> createLineTwoResponse = 지하철_노선_생성_요청(이호선());
-    ExtractableResponse<Response> createShinbundangResponse = 지하철_노선_생성_요청(신분당선());
+    ExtractableResponse<Response> 이호선_생성_응답 = 지하철_노선_생성_요청(이호선());
+    ExtractableResponse<Response> 신분당선_생성_응답 = 지하철_노선_생성_요청(신분당선());
 
     ExtractableResponse<Response> response = 지하철_노선_목록_조회_요청();
 
-    지하철_노선_목록에_포함됨(response, Arrays.asList(createLineTwoResponse, createShinbundangResponse));
+    지하철_노선_목록에_포함됨(response, Arrays.asList(이호선_생성_응답, 신분당선_생성_응답));
   }
 
   /** Given: 특정 지하철 노선이 등록되어 있고, When: 관리자가 해당 노선을 조회하면, Then: 해당 노선의 정보가 반환된다. */
@@ -58,8 +58,8 @@ class LineAcceptanceTest extends AcceptanceTest {
   @Test
   void showLine() {
     Line 이호선 = 이호선();
-    ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(이호선);
-    String uri = createResponse.header(HttpHeaders.LOCATION);
+    ExtractableResponse<Response> 노선_생성_응답 = 지하철_노선_생성_요청(이호선);
+    String uri = 노선_생성_응답.header(HttpHeaders.LOCATION);
 
     ExtractableResponse<Response> response = 지하철_노선_조회_요청(uri);
 
@@ -72,8 +72,8 @@ class LineAcceptanceTest extends AcceptanceTest {
   void updateLine() {
     String newName = "다른분당선";
     String newColor = "bg-orange-600";
-    ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(신분당선());
-    String uri = createResponse.header(HttpHeaders.LOCATION);
+    ExtractableResponse<Response> 노선_생성_응답 = 지하철_노선_생성_요청(신분당선());
+    String uri = 노선_생성_응답.header(HttpHeaders.LOCATION);
 
     지하철_노선_수정_요청(uri, newName, newColor);
 
@@ -84,8 +84,8 @@ class LineAcceptanceTest extends AcceptanceTest {
   @DisplayName("지하철 노선을 삭제한다.")
   @Test
   void deleteLine() {
-    ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(이호선());
-    String uri = createResponse.header(HttpHeaders.LOCATION);
+    ExtractableResponse<Response> 노선_생성_응답 = 지하철_노선_생성_요청(이호선());
+    String uri = 노선_생성_응답.header(HttpHeaders.LOCATION);
 
     ExtractableResponse<Response> response = 지하철_삭제_요청(uri);
 

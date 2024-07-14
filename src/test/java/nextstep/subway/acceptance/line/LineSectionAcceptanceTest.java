@@ -26,6 +26,7 @@ class LineSectionAcceptanceTest extends AcceptanceTest {
   private Station 강남역;
   private Station 역삼역;
   private Station 선릉역;
+  private Station 판교역;
   private Line 이호선;
 
   /** Given 지하철역과 노선 생성을 하고 */
@@ -36,6 +37,7 @@ class LineSectionAcceptanceTest extends AcceptanceTest {
     강남역 = stationRepository.save(강남역());
     역삼역 = stationRepository.save(역삼역());
     선릉역 = stationRepository.save(선릉역());
+    판교역 = stationRepository.save(판교역());
   }
 
   /** Given 구간의 상행역이 등록되어 있지 않고 하행역이 노선의 상행 종점역과 같은 경우 When 구간 등록을 하면 Then 노선 조회시 해당 구간이 첫 구간이다 */
@@ -64,6 +66,19 @@ class LineSectionAcceptanceTest extends AcceptanceTest {
     노선_마지막_구간으로_등록됨(response, 이호선, 역삼_선릉_구간);
   }
 
+  /** Given 구간의 하행 역이 이미 해당 노선에 등록되어 있으면 When 구간 등록을 하면 Then 400 Bad Request 에러가 반환된다. */
+  @DisplayName("종점 하행역과 같은 상행역인 구간 등록 시 구간의 하행 역이 이미 해당 노선에 등록되어 있으면 에러가 발생한다.")
+  @Test
+  void appendLineSectionCycle() {
+    이호선 = lineRepository.save(aLine().lineSections(new LineSections(강남_역삼_구간())).build());
+    LineSection cyclicSection =
+        LineSection.builder().upStation(역삼역).downStation(강남역).distance(20).build();
+
+    ExtractableResponse<Response> response = 노선_구간_등록_요청(이호선, cyclicSection);
+
+    노선_구간_요청_실패함(response);
+  }
+
   /** Given 새로운 구간의 상행역이 노선에 등록되어있는 하행 종점역이 아니고 When 구간 등록을 하면 Then 400 Bad Request 에러가 반환된다. */
   @DisplayName("구간이 노선 중간에 등록된다.")
   @Test
@@ -75,5 +90,19 @@ class LineSectionAcceptanceTest extends AcceptanceTest {
     ExtractableResponse<Response> response = 노선_구간_등록_요청(이호선, 강남_역삼_구간);
 
     노선_i변째_구간으로_등록됨(response, 이호선, 강남_역삼_구간, 1);
+  }
+
+  /** Given 새로운 구간의 상행역이 노선에 등록되어있는 하행 종점역이 아니고 When 구간 등록을 하면 Then 400 Bad Request 에러가 반환된다. */
+  @DisplayName("노선과 겹치는 역이 없는 구간을 등록 시 에러가 발생한다.")
+  @Test
+  void addDisjointLineSectionReturnsBadRequest() {
+    LineSections 강남_역삼_구간 = LineSections.of(강남역, 역삼역, 10);
+    이호선 = lineRepository.save(aLine().lineSections(강남_역삼_구간).build());
+    LineSection disjointedSection =
+        LineSection.builder().upStation(선릉역).downStation(판교역).distance(20).build();
+
+    ExtractableResponse<Response> response = 노선_구간_등록_요청(이호선, disjointedSection);
+
+    노선_구간_요청_실패함(response);
   }
 }
