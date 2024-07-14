@@ -4,7 +4,6 @@ import static nextstep.subway.support.Fixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-
 import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.station.domain.Station;
 import org.junit.jupiter.api.DisplayName;

@@ -2,7 +2,6 @@ package nextstep.subway.line.domain;
 
 import java.util.List;
 import javax.persistence.*;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,8 +66,8 @@ public class LineSection {
 
   public boolean isSame(LineSection lineSection) {
     return upStation.isSame(lineSection.getUpStation())
-           && downStation.isSame(lineSection.getDownStation())
-           && distance == lineSection.getDistance();
+        && downStation.isSame(lineSection.getDownStation())
+        && distance == lineSection.getDistance();
   }
 
   public List<LineSection> split(LineSection lineSection) {
