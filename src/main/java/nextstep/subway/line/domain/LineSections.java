@@ -69,12 +69,31 @@ public class LineSections {
       sections.add(lineSection);
       return;
     }
-    OptionalInt optionalIndex = indexOfSplitUp(lineSection);
-    if (optionalIndex.isPresent()) {
-      insert(lineSection, optionalIndex.getAsInt());
+    if (insertUp(lineSection)) {
+      return;
+    }
+    if (insertDown(lineSection)) {
       return;
     }
     throw new LineSectionNotAppendableException();
+  }
+
+  private boolean insertUp(LineSection lineSection) {
+    OptionalInt optionalIndex = indexOfSplitUp(lineSection);
+    if (optionalIndex.isPresent()) {
+      insert(lineSection, optionalIndex.getAsInt());
+      return true;
+    }
+    return false;
+  }
+
+  private boolean insertDown(LineSection lineSection) {
+    OptionalInt optionalIndex = indexOfSplitDown(lineSection);
+    if (optionalIndex.isPresent()) {
+      insert(lineSection, optionalIndex.getAsInt());
+      return true;
+    }
+    return false;
   }
 
   private void insert(LineSection lineSection, int index) {
@@ -86,6 +105,12 @@ public class LineSections {
   private OptionalInt indexOfSplitUp(LineSection lineSection) {
     return IntStream.range(0, sections.size())
         .filter(it -> sections.get(it).canSplitUp(lineSection))
+        .findFirst();
+  }
+
+  private OptionalInt indexOfSplitDown(LineSection lineSection) {
+    return IntStream.range(0, sections.size())
+        .filter(it -> sections.get(it).canSplitDown(lineSection))
         .findFirst();
   }
 
