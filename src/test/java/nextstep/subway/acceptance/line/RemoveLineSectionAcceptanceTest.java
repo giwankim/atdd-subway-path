@@ -1,6 +1,6 @@
 package nextstep.subway.acceptance.line;
 
-import static nextstep.subway.acceptance.line.steps.RemoveLineSectionSteps.*;
+import static nextstep.subway.acceptance.line.steps.LineSectionAcceptanceSteps.*;
 import static nextstep.subway.support.Fixtures.*;
 
 import io.restassured.response.ExtractableResponse;

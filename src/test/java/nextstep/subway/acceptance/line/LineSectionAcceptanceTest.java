@@ -1,6 +1,6 @@
 package nextstep.subway.acceptance.line;
 
-import static nextstep.subway.acceptance.line.steps.AppendLineSectionSteps.*;
+import static nextstep.subway.acceptance.line.steps.LineSectionAcceptanceSteps.*;
 import static nextstep.subway.support.Fixtures.*;
 
 import io.restassured.response.ExtractableResponse;
@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayName("지하철 구간 등록 기능 (추가 요구사항 반영)")
+@DisplayName("지하철 구간 등록 기능")
 class LineSectionAcceptanceTest extends AcceptanceTest {
   @Autowired private StationRepository stationRepository;
   @Autowired private LineRepository lineRepository;
