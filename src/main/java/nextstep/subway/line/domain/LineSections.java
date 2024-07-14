@@ -8,8 +8,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import nextstep.subway.line.exception.CycleNotAllowedException;
-import nextstep.subway.line.exception.LineSectionNotAppendableException;
+import nextstep.subway.line.exception.CannotAddLineSectionException;
+import nextstep.subway.line.exception.LineSectionAlreadyExistsException;
 import nextstep.subway.line.exception.RemoveLastLineSectionException;
 import nextstep.subway.line.exception.RemoveNonTerminalStationException;
 import nextstep.subway.station.domain.Station;
@@ -75,7 +75,7 @@ public class LineSections {
     if (insertDown(lineSection)) {
       return;
     }
-    throw new LineSectionNotAppendableException();
+    throw new CannotAddLineSectionException();
   }
 
   private boolean insertUp(LineSection lineSection) {
@@ -124,7 +124,7 @@ public class LineSections {
 
   private void validateAdd(LineSection lineSection) {
     if (containsBothStations(lineSection)) {
-      throw new CycleNotAllowedException();
+      throw new LineSectionAlreadyExistsException();
     }
   }
 
