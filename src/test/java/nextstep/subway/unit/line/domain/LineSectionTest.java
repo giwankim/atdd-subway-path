@@ -4,6 +4,7 @@ import static nextstep.subway.support.Fixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+
 import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.station.domain.Station;
 import org.junit.jupiter.api.DisplayName;
@@ -33,39 +34,24 @@ class LineSectionTest {
     assertThat(section.canAppend(new LineSection(강남역, 판교역, 30))).isFalse();
   }
 
-  @DisplayName("노선 가운데 새로운 구간을 추가할 수 있는 경우를 검증한다.")
+  @DisplayName("노선 상행역을 공통으로 가운데 새로운 구간을 추가할 수 있는지 확인한다.")
   @Test
-  void canSplitShouldReturnTrue() {
+  void canSplitUp() {
     LineSection section = new LineSection(강남역, 선릉역, 30);
-    assertThat(section.canSplit(new LineSection(강남역, 역삼역, 10))).isTrue();
-    assertThat(section.canSplit(new LineSection(역삼역, 선릉역, 20))).isTrue();
+    assertThat(section.canSplitUp(new LineSection(강남역, 역삼역, 10))).isTrue();
+    assertThat(section.canSplitUp(new LineSection(역삼역, 선릉역, 10))).isFalse();
+    assertThat(section.canSplitUp(new LineSection(강남역, 역삼역, 40))).isFalse();
+    assertThat(section.canSplitUp(new LineSection(역삼역, 선릉역, 20))).isFalse();
   }
 
-  @DisplayName("노선 가운데 새로운 구간을 추가할 수 없는 경우를 검증한다.")
+  @DisplayName("노선 하행역을 공통으로 가운데 새로운 구간을 추가할 수 있는지 확인한다.")
   @Test
-  void canSplitShouldReturnFalse() {
+  void canSplitDown() {
     LineSection section = new LineSection(강남역, 선릉역, 30);
-    assertThat(section.canSplit(new LineSection(강남역, 역삼역, 40))).isFalse();
-    assertThat(section.canSplit(new LineSection(선릉역, 판교역, 50))).isFalse();
-    assertThat(section.canSplit(new LineSection(역삼역, 판교역, 20))).isFalse();
-  }
-
-  @DisplayName("상행역이 같은지 확인한다.")
-  @Test
-  void isSameUpStation() {
-    LineSection section = new LineSection(강남역, 역삼역, 10);
-    assertThat(section.isSameUpStation(LineSection.of(강남역, 판교역, 10))).isTrue();
-    assertThat(section.isSameUpStation(LineSection.of(역삼역, 선릉역, 10))).isFalse();
-    assertThat(section.isSameUpStation(LineSection.of(선릉역, 판교역, 10))).isFalse();
-  }
-
-  @DisplayName("하행역이 같은지 확인한다.")
-  @Test
-  void isSameDownStation() {
-    LineSection section = new LineSection(강남역, 역삼역, 10);
-    assertThat(section.isSameDownStation(LineSection.of(판교역, 역삼역, 10))).isTrue();
-    assertThat(section.isSameDownStation(LineSection.of(강남역, 판교역, 10))).isFalse();
-    assertThat(section.isSameDownStation(LineSection.of(선릉역, 판교역, 10))).isFalse();
+    assertThat(section.canSplitDown(new LineSection(역삼역, 선릉역, 20))).isTrue();
+    assertThat(section.canSplitDown(new LineSection(강남역, 역삼역, 10))).isFalse();
+    assertThat(section.canSplitDown(new LineSection(역삼역, 선릉역, 40))).isFalse();
+    assertThat(section.canSplitDown(new LineSection(강남역, 역삼역, 10))).isFalse();
   }
 
   @DisplayName("구간이 같은지 확인한다.")

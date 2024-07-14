@@ -2,6 +2,7 @@ package nextstep.subway.line.domain;
 
 import java.util.List;
 import javax.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,39 +51,38 @@ public class LineSection {
     return downStation.isSame(lineSection.upStation);
   }
 
-  public boolean canSplit(LineSection lineSection) {
+  public boolean canSplitUp(LineSection lineSection) {
     if (lineSection.distance >= distance) {
       return false;
     }
-    return isSameUpStation(lineSection) || isSameDownStation(lineSection);
-  }
-
-  public boolean isSameUpStation(LineSection lineSection) {
     return upStation.isSame(lineSection.getUpStation());
   }
 
-  public boolean isSameDownStation(LineSection lineSection) {
+  public boolean canSplitDown(LineSection lineSection) {
+    if (lineSection.distance >= distance) {
+      return false;
+    }
     return downStation.isSame(lineSection.getDownStation());
   }
 
   public boolean isSame(LineSection lineSection) {
     return upStation.isSame(lineSection.getUpStation())
-        && downStation.isSame(lineSection.getDownStation())
-        && distance == lineSection.getDistance();
+           && downStation.isSame(lineSection.getDownStation())
+           && distance == lineSection.getDistance();
   }
 
   public List<LineSection> split(LineSection lineSection) {
-    if (!canSplit(lineSection)) {
-      throw new IllegalArgumentException("LineSection#split not allowed!");
-    }
-    if (isSameUpStation(lineSection)) {
+    if (canSplitUp(lineSection)) {
       return List.of(
           LineSection.of(upStation, lineSection.getDownStation(), lineSection.distance),
           LineSection.of(
               lineSection.getDownStation(), downStation, distance - lineSection.distance));
     }
-    return List.of(
-        LineSection.of(upStation, lineSection.getUpStation(), distance - lineSection.distance),
-        LineSection.of(lineSection.getUpStation(), downStation, lineSection.distance));
+    if (canSplitDown(lineSection)) {
+      return List.of(
+          LineSection.of(upStation, lineSection.getUpStation(), distance - lineSection.distance),
+          LineSection.of(lineSection.getUpStation(), downStation, lineSection.distance));
+    }
+    throw new IllegalArgumentException("LineSection#split not allowed!");
   }
 }
