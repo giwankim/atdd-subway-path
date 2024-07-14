@@ -2,6 +2,7 @@ package nextstep.subway.line.domain;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -55,11 +56,11 @@ public class LineSections {
   }
 
   public void add(LineSection lineSection) {
+    validateAdd(lineSection);
     if (isEmpty()) {
       sections.add(lineSection);
       return;
     }
-    validateAdd(lineSection);
     if (isPrepend(lineSection)) {
       sections.add(0, lineSection);
       return;
@@ -68,7 +69,24 @@ public class LineSections {
       sections.add(lineSection);
       return;
     }
+    OptionalInt optionalIndex = indexOfSplitUp(lineSection);
+    if (optionalIndex.isPresent()) {
+      insert(lineSection, optionalIndex.getAsInt());
+      return;
+    }
     throw new LineSectionNotAppendableException();
+  }
+
+  private void insert(LineSection lineSection, int index) {
+    LineSection splitTargetSection = sections.remove(index);
+    List<LineSection> splitSections = splitTargetSection.split(lineSection);
+    sections.addAll(index, splitSections);
+  }
+
+  private OptionalInt indexOfSplitUp(LineSection lineSection) {
+    return IntStream.range(0, sections.size())
+        .filter(it -> sections.get(it).canSplitUp(lineSection))
+        .findFirst();
   }
 
   private boolean isPrepend(LineSection lineSection) {

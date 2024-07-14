@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Arrays;
-
 import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.line.domain.LineSections;
 import nextstep.subway.line.exception.CycleNotAllowedException;
+import nextstep.subway.line.exception.LineSectionNotAppendableException;
 import nextstep.subway.station.domain.Station;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,8 +48,7 @@ class LineSectionsTest {
   @Test
   void appendShouldThrowCycleException() {
     LineSections sections =
-        new LineSections(
-            Arrays.asList(LineSection.of(강남역, 역삼역, 10), LineSection.of(역삼역, 선릉역, 20)));
+        new LineSections(Arrays.asList(LineSection.of(강남역, 역삼역, 10), LineSection.of(역삼역, 선릉역, 20)));
     LineSection section = LineSection.of(선릉역, 역삼역, 30);
 
     assertThatExceptionOfType(CycleNotAllowedException.class)
@@ -72,15 +71,14 @@ class LineSectionsTest {
   @Test
   void prependShouldThrowCycleException() {
     LineSections sections =
-        new LineSections(
-            Arrays.asList(LineSection.of(강남역, 역삼역, 10), LineSection.of(역삼역, 선릉역, 20)));
+        new LineSections(Arrays.asList(LineSection.of(강남역, 역삼역, 10), LineSection.of(역삼역, 선릉역, 20)));
     LineSection section = LineSection.of(역삼역, 강남역, 30);
 
     assertThatExceptionOfType(CycleNotAllowedException.class)
         .isThrownBy(() -> sections.add(section));
   }
 
-  @DisplayName("상행역이 같은 경우 가운데 구간의 하행역이 추가된다.")
+  @DisplayName("상행역이 같은 구간을 추가하는 경우 구간 가운데 하행역이 추가된다.")
   @Test
   void addShouldInsertWhenUpStationsAreTheSame() {
     LineSections sections = new LineSections(강남역, 선릉역, 30);
@@ -91,5 +89,15 @@ class LineSectionsTest {
     assertThat(sections.size()).isEqualTo(2);
     sections.getFirst().isSame(section);
     sections.getLast().isSame(LineSection.of(역삼역, 선릉역, 20));
+  }
+
+  @DisplayName("상행역이 같은 구간을 추가하는 경우라도 구간 길이가 이전 구간 길이보다 같거나 길면 추가되지 않는다.")
+  @Test
+  void addShouldNotInsertWhenUpStationsAreTheSameButDistanceTooLong() {
+    LineSections sections = new LineSections(강남역, 선릉역, 10);
+    LineSection section = LineSection.of(강남역, 역삼역, 20);
+
+    assertThatExceptionOfType(LineSectionNotAppendableException.class)
+        .isThrownBy(() -> sections.add(section));
   }
 }
