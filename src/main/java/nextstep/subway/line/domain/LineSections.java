@@ -150,16 +150,41 @@ public class LineSections {
 
   public void remove(Station station) {
     validateRemove(station);
-    removeTerminal(station);
+    if (removeTerminal(station)) {
+      return;
+    }
+    if (removeMiddle(station)) {
+      return;
+    }
+    throw new IllegalArgumentException("역 #" + station.getId() + " 를 제거할 수 없습니다.");
   }
 
-  private void removeTerminal(Station station) {
+  private boolean removeMiddle(Station station) {
+    OptionalInt optionalIndex =
+        IntStream.range(0, sections.size())
+            .filter(it -> sections.get(it).contains(station))
+            .findFirst();
+    if (optionalIndex.isEmpty()) {
+      return false;
+    }
+    int index = optionalIndex.getAsInt();
+    LineSection upSection = sections.remove(index);
+    LineSection downSection = sections.remove(index);
+    LineSection mergedSection = upSection.merge(downSection);
+    sections.add(index, mergedSection);
+    return true;
+  }
+
+  private boolean removeTerminal(Station station) {
     if (getFirst().getUpStation().isSame(station)) {
       sections.remove(0);
+      return true;
     }
     if (getLast().getDownStation().isSame(station)) {
       sections.remove(sections.size() - 1);
+      return true;
     }
+    return false;
   }
 
   private void validateRemove(Station station) {

@@ -175,5 +175,17 @@ class LineSectionsTest {
       assertThat(sections.size()).isEqualTo(1);
       assertThat(sections.getLast().isSame(LineSection.of(역삼역, 선릉역, 20))).isTrue();
     }
+
+    @DisplayName("중간역을 제거한다.")
+    @Test
+    void shouldRemoveMiddleStation() {
+      LineSections sections =
+          new LineSections(LineSection.of(강남역, 역삼역, 10), LineSection.of(역삼역, 선릉역, 20));
+
+      sections.remove(역삼역);
+
+      assertThat(sections.size()).isEqualTo(1);
+      assertThat(sections.getFirst().isSame(LineSection.of(강남역, 선릉역, 30))).isTrue();
+    }
   }
 }
