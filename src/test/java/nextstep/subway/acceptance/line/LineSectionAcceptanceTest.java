@@ -125,7 +125,7 @@ class LineSectionAcceptanceTest {
     @BeforeEach
     protected void setUp() {
       super.setUp();
-      stationRepository.save(강남역());
+      강남역 = stationRepository.save(강남역());
       역삼역 = stationRepository.save(역삼역());
       선릉역 = stationRepository.save(선릉역());
       판교역 = stationRepository.save(판교역());

@@ -151,5 +151,29 @@ class LineSectionsTest {
       assertThatExceptionOfType(CannotRemoveLastLineSectionException.class)
           .isThrownBy(() -> sections.remove(역삼역));
     }
+
+    @DisplayName("하행 종점역을 제거한다.")
+    @Test
+    void shouldRemoveTerminalDownStation() {
+      LineSections sections =
+          new LineSections(LineSection.of(강남역, 역삼역, 10), LineSection.of(역삼역, 선릉역, 20));
+
+      sections.remove(선릉역);
+
+      assertThat(sections.size()).isEqualTo(1);
+      assertThat(sections.getFirst().isSame(LineSection.of(강남역, 역삼역, 10))).isTrue();
+    }
+
+    @DisplayName("상행 종점역을 제거한다.")
+    @Test
+    void shouldRemoveTerminalUpStation() {
+      LineSections sections =
+          new LineSections(LineSection.of(강남역, 역삼역, 10), LineSection.of(역삼역, 선릉역, 20));
+
+      sections.remove(강남역);
+
+      assertThat(sections.size()).isEqualTo(1);
+      assertThat(sections.getLast().isSame(LineSection.of(역삼역, 선릉역, 20))).isTrue();
+    }
   }
 }

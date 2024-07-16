@@ -150,7 +150,16 @@ public class LineSections {
 
   public void remove(Station station) {
     validateRemove(station);
-    sections.remove(sections.size() - 1);
+    removeTerminal(station);
+  }
+
+  private void removeTerminal(Station station) {
+    if (getFirst().getUpStation().isSame(station)) {
+      sections.remove(0);
+    }
+    if (getLast().getDownStation().isSame(station)) {
+      sections.remove(sections.size() - 1);
+    }
   }
 
   private void validateRemove(Station station) {
