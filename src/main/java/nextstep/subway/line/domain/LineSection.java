@@ -84,4 +84,8 @@ public class LineSection {
     }
     throw new IllegalArgumentException("LineSection#split not allowed!");
   }
+
+  public boolean containsStation(Station station) {
+    return upStation.isSame(station) || downStation.isSame(station);
+  }
 }

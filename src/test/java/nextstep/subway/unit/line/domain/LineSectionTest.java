@@ -86,4 +86,13 @@ class LineSectionTest {
     assertThat(sections.get(0).isSame(LineSection.of(강남역, 역삼역, 20))).isTrue();
     assertThat(sections.get(1).isSame(LineSection.of(역삼역, 선릉역, 10))).isTrue();
   }
+
+  @DisplayName("역이 구간의 상행역이나 하행역인지 확인한다.")
+  @Test
+  void containsStation() {
+    LineSection section = LineSection.of(강남역, 역삼역, 10);
+    assertThat(section.containsStation(강남역)).isTrue();
+    assertThat(section.containsStation(역삼역)).isTrue();
+    assertThat(section.containsStation(선릉역)).isFalse();
+  }
 }
