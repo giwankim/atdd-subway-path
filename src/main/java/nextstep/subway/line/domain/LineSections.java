@@ -160,10 +160,7 @@ public class LineSections {
   }
 
   private boolean removeMiddle(Station station) {
-    OptionalInt optionalIndex =
-        IntStream.range(0, sections.size())
-            .filter(it -> sections.get(it).contains(station))
-            .findFirst();
+    OptionalInt optionalIndex = indexOfSectionContaining(station);
     if (optionalIndex.isEmpty()) {
       return false;
     }
@@ -173,6 +170,12 @@ public class LineSections {
     LineSection mergedSection = upSection.merge(downSection);
     sections.add(index, mergedSection);
     return true;
+  }
+
+  private OptionalInt indexOfSectionContaining(Station station) {
+    return IntStream.range(0, sections.size())
+        .filter(it -> sections.get(it).contains(station))
+        .findFirst();
   }
 
   private boolean removeTerminal(Station station) {
