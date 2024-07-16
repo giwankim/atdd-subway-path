@@ -9,9 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nextstep.subway.line.exception.CannotAddLineSectionException;
+import nextstep.subway.line.exception.CannotRemoveLastLineSectionException;
 import nextstep.subway.line.exception.LineSectionAlreadyExistsException;
-import nextstep.subway.line.exception.RemoveLastLineSectionException;
-import nextstep.subway.line.exception.RemoveNonTerminalStationException;
+import nextstep.subway.line.exception.StationNotFoundInLineException;
 import nextstep.subway.station.domain.Station;
 
 @Embeddable
@@ -148,21 +148,17 @@ public class LineSections {
     return Collections.unmodifiableList(stations);
   }
 
-  public void removeLast(Station station) {
+  public void remove(Station station) {
     validateRemove(station);
     sections.remove(sections.size() - 1);
   }
 
   private void validateRemove(Station station) {
-    if (!isTerminalStation(station)) {
-      throw new RemoveNonTerminalStationException();
+    if (!getStations().contains(station)) {
+      throw new StationNotFoundInLineException(station.getId());
     }
     if (size() <= 1) {
-      throw new RemoveLastLineSectionException();
+      throw new CannotRemoveLastLineSectionException();
     }
-  }
-
-  private boolean isTerminalStation(Station station) {
-    return getLast().getDownStation().isSame(station);
   }
 }
