@@ -1,5 +1,6 @@
 package nextstep.subway.path.domain;
 
+import lombok.ToString;
 import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.station.domain.Station;
 import org.jgrapht.GraphPath;
@@ -7,40 +8,63 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 
+@ToString
 public class SubwayGraph {
+  public static final String STATION_NOT_FOUND = "추가하는 구간의 상/하행역이 존재하지 않습니다.";
+
   private final WeightedMultigraph<Station, DefaultWeightedEdge> graph;
 
+  public SubwayGraph(WeightedMultigraph<Station, DefaultWeightedEdge> graph) {
+    this.graph = graph;
+  }
+
   public SubwayGraph() {
-    this.graph = new WeightedMultigraph<>(DefaultWeightedEdge.class);
+    this(new WeightedMultigraph<>(DefaultWeightedEdge.class));
   }
 
   public void addStation(Station station) {
     graph.addVertex(station);
   }
 
-  public boolean contains(Station station) {
-    return graph.vertexSet().contains(station);
-  }
-
   public void addLineSection(LineSection lineSection) {
-    DefaultWeightedEdge edge =
-        graph.addEdge(lineSection.getUpStation(), lineSection.getDownStation());
+    Station upStation = lineSection.getUpStation();
+    Station downStation = lineSection.getDownStation();
+    validate(upStation, downStation);
+    DefaultWeightedEdge edge = graph.addEdge(upStation, downStation);
     graph.setEdgeWeight(edge, lineSection.getDistance());
   }
 
-  public boolean containsLineSection(LineSection lineSection) {
-    DefaultWeightedEdge edge =
-        graph.getEdge(lineSection.getUpStation(), lineSection.getDownStation());
-    if (edge == null) {
-      return false;
+  private void validate(Station upStation, Station downStation) {
+    if (!graph.containsVertex(upStation) || !graph.containsVertex(downStation)) {
+      throw new IllegalArgumentException(STATION_NOT_FOUND);
     }
-    return graph.getEdgeWeight(edge) == lineSection.getDistance();
   }
 
-  public SubwayPath getShortestPath(Station source, Station target) {
+  public Path getShortestPath(Station source, Station target) {
     DijkstraShortestPath<Station, DefaultWeightedEdge> shortestPath =
         new DijkstraShortestPath<>(graph);
     GraphPath<Station, DefaultWeightedEdge> path = shortestPath.getPath(source, target);
-    return SubwayPath.of(path.getVertexList(), (long) path.getWeight());
+    return Path.of(path.getVertexList(), (long) path.getWeight());
+  }
+
+  public boolean isSame(SubwayGraph that) {
+    if (!graph.vertexSet().equals(that.graph.vertexSet())) {
+      return false;
+    }
+    if (graph.edgeSet().size() != that.graph.edgeSet().size()) {
+      return false;
+    }
+    for (DefaultWeightedEdge edge : graph.edgeSet()) {
+      Station source = graph.getEdgeSource(edge);
+      Station target = graph.getEdgeTarget(edge);
+      DefaultWeightedEdge thatEdge = that.graph.getEdge(source, target);
+      if (thatEdge == null) {
+        return false;
+      }
+      if (Math.abs(graph.getEdgeWeight(edge) - that.graph.getEdgeWeight(thatEdge)) > 10e-7) {
+        return false;
+      }
+    }
+    return true;
   }
 }

@@ -1,12 +1,14 @@
 package nextstep.subway.unit.path.domain;
 
 import static nextstep.subway.support.Fixtures.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import nextstep.subway.line.domain.LineSection;
+import nextstep.subway.path.domain.Path;
 import nextstep.subway.path.domain.SubwayGraph;
-import nextstep.subway.path.domain.SubwayPath;
 import nextstep.subway.station.domain.Station;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.WeightedMultigraph;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,63 +19,75 @@ class SubwayGraphTest {
   private final Station 강남역 = 강남역();
   private final Station 남부터미널역 = 남부터미널역();
   private final Station 양재역 = 양재역();
-  private final Station 역삼역 = 역삼역();
 
-  @DisplayName("지하철 역을 그래프에 추가한다.")
+  @DisplayName("역을 추가한다.")
   @Test
   void addStation() {
     SubwayGraph graph = new SubwayGraph();
 
-    graph.addStation(강남역);
+    graph.addStation(교대역);
 
-    assertThat(graph.contains(강남역)).isTrue();
+    assertThat(graph.isSame(new SubwayGraph())).isFalse();
   }
 
-  @DisplayName("지하철 역이 그래프에 포함되어 있는지 확인한다.")
+  @DisplayName("중복해서 역을 추가해도 그래프는 변하지 않는다.")
   @Test
-  void contains() {
+  void duplicateAddStation() {
     SubwayGraph graph = new SubwayGraph();
+    graph.addStation(교대역);
 
-    graph.addStation(역삼역);
+    graph.addStation(교대역);
 
-    assertThat(graph.contains(역삼역)).isTrue();
-    assertThat(graph.contains(강남역)).isFalse();
+    assertThat(
+            graph.isSame(
+                new SubwayGraph(
+                    WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
+                            DefaultWeightedEdge.class)
+                        .addVertex(교대역)
+                        .build())))
+        .isTrue();
   }
 
-  @DisplayName("지하철 구간을 그래프에 추가한다.")
+  @DisplayName("구간을 추가한다.")
   @Test
   void addLineSection() {
     SubwayGraph graph = new SubwayGraph();
+    graph.addStation(교대역);
     graph.addStation(강남역);
-    graph.addStation(역삼역);
-    LineSection lineSection = new LineSection(강남역, 역삼역, 10);
 
-    graph.addLineSection(lineSection);
+    graph.addLineSection(LineSection.of(교대역, 강남역, 10));
 
-    assertThat(graph.containsLineSection(lineSection)).isTrue();
+    assertThat(graph.isSame(new SubwayGraph())).isFalse();
   }
 
-  @DisplayName("지하철 구간이 그래프에 포함되어 있는지 확인한다.")
+  @DisplayName("Multigraph 이기에 중복해서 구간을 추가할 수 있다.")
   @Test
-  void containsLineSection() {
+  void duplicateAddLineSection() {
     SubwayGraph graph = new SubwayGraph();
+    graph.addStation(교대역);
     graph.addStation(강남역);
-    graph.addStation(역삼역);
-    LineSection section = LineSection.of(강남역, 역삼역, 10);
-    graph.addLineSection(section);
+    graph.addLineSection(LineSection.of(교대역, 강남역, 10));
 
-    assertThat(graph.containsLineSection(section)).isTrue();
+    graph.addLineSection(LineSection.of(교대역, 강남역, 10));
+
+    assertThat(
+        graph.isSame(
+            new SubwayGraph(
+                WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
+                        DefaultWeightedEdge.class)
+                    .addEdge(교대역, 강남역, 10)
+                    .addEdge(교대역, 강남역, 10)
+                    .build())))
+        .isTrue();
   }
 
-  @DisplayName("구간의 거리가 다른 경우에 그래프에 포함되어 있지 않다고 답변한다.")
+  @DisplayName("추가하는 구간의 상/하행역이 존재하지 않을 때 예외를 던진다.")
   @Test
-  void containsLineSectionShouldReturnFalseWhenDistancesAreDifferent() {
+  void addLineSectionShouldThrowExceptionWhenStationNotExist() {
     SubwayGraph graph = new SubwayGraph();
-    graph.addStation(강남역);
-    graph.addStation(역삼역);
-    graph.addLineSection(LineSection.of(강남역, 역삼역, 10));
-
-    assertThat(graph.containsLineSection(LineSection.of(강남역, 역삼역, 20))).isFalse();
+    LineSection section = LineSection.of(교대역, 강남역, 10);
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> graph.addLineSection(section));
   }
 
   @DisplayName("최단 거리 경로를 조회한다.")
@@ -89,7 +103,7 @@ class SubwayGraphTest {
     graph.addLineSection(LineSection.of(교대역, 남부터미널역, 2));
     graph.addLineSection(LineSection.of(남부터미널역, 양재역, 3));
 
-    SubwayPath path = graph.getShortestPath(교대역, 양재역);
+    Path path = graph.getShortestPath(교대역, 양재역);
 
     assertThat(path.getTotalDistance()).isEqualTo(5);
     assertThat(path.getStations()).containsExactly(교대역, 남부터미널역, 양재역);
