@@ -1,8 +1,10 @@
 package nextstep.subway.path.application;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode(of = {"source", "target"})
 public class PathRequest {
   private final Long source;
   private final Long target;
