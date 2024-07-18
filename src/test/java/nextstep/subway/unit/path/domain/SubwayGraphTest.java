@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.*;
 
 import nextstep.subway.line.domain.Line;
 import nextstep.subway.line.domain.LineSection;
+import nextstep.subway.path.domain.LineSectionEdge;
 import nextstep.subway.path.domain.Path;
 import nextstep.subway.path.domain.SubwayGraph;
 import nextstep.subway.station.domain.Station;
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,8 +44,7 @@ class SubwayGraphTest {
     assertThat(
             graph.isSame(
                 new SubwayGraph(
-                    WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
-                            DefaultWeightedEdge.class)
+                    WeightedMultigraph.<Station, LineSectionEdge>builder(LineSectionEdge.class)
                         .addVertex(교대역)
                         .build())))
         .isTrue();
@@ -69,17 +68,18 @@ class SubwayGraphTest {
     SubwayGraph graph = new SubwayGraph();
     graph.addStation(교대역);
     graph.addStation(강남역);
-    graph.addLineSection(LineSection.of(교대역, 강남역, 10));
+    LineSection 교대_강남_구간 = LineSection.of(교대역, 강남역, 10);
+    graph.addLineSection(교대_강남_구간);
 
-    graph.addLineSection(LineSection.of(교대역, 강남역, 10));
+    graph.addLineSection(교대_강남_구간);
 
     assertThat(
             graph.isSame(
                 new SubwayGraph(
-                    WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
-                            DefaultWeightedEdge.class)
-                        .addEdge(교대역, 강남역, 10)
-                        .addEdge(교대역, 강남역, 10)
+                    WeightedMultigraph.<Station, LineSectionEdge>builder(LineSectionEdge.class)
+                        .addVertices(교대역, 강남역)
+                        .addEdge(교대역, 강남역, LineSectionEdge.of(교대_강남_구간), 10)
+                        .addEdge(교대역, 강남역, LineSectionEdge.of(교대_강남_구간), 10)
                         .build())))
         .isTrue();
   }
@@ -98,15 +98,16 @@ class SubwayGraphTest {
   void addLine() {
     SubwayGraph graph = new SubwayGraph();
     Line 이호선 = 이호선();
+    Station 역삼역 = 역삼역();
 
     graph.addLine(이호선);
 
     assertThat(
             graph.isSame(
                 new SubwayGraph(
-                    WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
-                            DefaultWeightedEdge.class)
-                        .addEdge(강남역, 역삼역(), 10)
+                    WeightedMultigraph.<Station, LineSectionEdge>builder(LineSectionEdge.class)
+                        .addVertices(강남역, 역삼역)
+                        .addEdge(강남역, 역삼역, LineSectionEdge.of(강남_역삼_구간()), 10)
                         .build())))
         .isTrue();
   }

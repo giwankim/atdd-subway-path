@@ -71,4 +71,20 @@ public class Fixtures {
   public static LineSection 강남_판교_구간() {
     return LineSection.builder().upStation(강남역()).downStation(판교역()).distance(20).build();
   }
+
+  public static LineSection 교대_강남_구간() {
+    return LineSection.builder().upStation(교대역()).downStation(강남역()).distance(10).build();
+  }
+
+  public static LineSection 강남_양재_구간() {
+    return LineSection.builder().upStation(강남역()).downStation(양재역()).distance(10).build();
+  }
+
+  public static LineSection 교대_남부터미널_구간() {
+    return LineSection.builder().upStation(교대역()).downStation(남부터미널역()).distance(2).build();
+  }
+
+  public static LineSection 남부터미널_양재_구간() {
+    return LineSection.builder().upStation(남부터미널역()).downStation(양재역()).distance(3).build();
+  }
 }

@@ -6,21 +6,20 @@ import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.station.domain.Station;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 
 @ToString
 public class SubwayGraph {
   public static final String STATION_NOT_FOUND = "추가하는 구간의 상/하행역이 존재하지 않습니다.";
 
-  private final WeightedMultigraph<Station, DefaultWeightedEdge> graph;
+  private final WeightedMultigraph<Station, LineSectionEdge> graph;
 
-  public SubwayGraph(WeightedMultigraph<Station, DefaultWeightedEdge> graph) {
+  public SubwayGraph(WeightedMultigraph<Station, LineSectionEdge> graph) {
     this.graph = graph;
   }
 
   public SubwayGraph() {
-    this(new WeightedMultigraph<>(DefaultWeightedEdge.class));
+    this(new WeightedMultigraph<>(LineSectionEdge.class));
   }
 
   public void addStation(Station station) {
@@ -31,7 +30,8 @@ public class SubwayGraph {
     Station upStation = lineSection.getUpStation();
     Station downStation = lineSection.getDownStation();
     validate(upStation, downStation);
-    DefaultWeightedEdge edge = graph.addEdge(upStation, downStation);
+    LineSectionEdge edge = LineSectionEdge.of(lineSection);
+    graph.addEdge(upStation, downStation, edge);
     graph.setEdgeWeight(edge, lineSection.getDistance());
   }
 
@@ -48,9 +48,8 @@ public class SubwayGraph {
 
   public Path getShortestPath(Station source, Station sink) {
     validate(source, sink);
-    DijkstraShortestPath<Station, DefaultWeightedEdge> shortestPath =
-        new DijkstraShortestPath<>(graph);
-    GraphPath<Station, DefaultWeightedEdge> path = shortestPath.getPath(source, sink);
+    DijkstraShortestPath<Station, LineSectionEdge> shortestPath = new DijkstraShortestPath<>(graph);
+    GraphPath<Station, LineSectionEdge> path = shortestPath.getPath(source, sink);
     if (path == null) {
       return Path.empty();
     }
@@ -64,10 +63,10 @@ public class SubwayGraph {
     if (graph.edgeSet().size() != that.graph.edgeSet().size()) {
       return false;
     }
-    for (DefaultWeightedEdge edge : graph.edgeSet()) {
+    for (LineSectionEdge edge : graph.edgeSet()) {
       Station source = graph.getEdgeSource(edge);
       Station target = graph.getEdgeTarget(edge);
-      DefaultWeightedEdge thatEdge = that.graph.getEdge(source, target);
+      LineSectionEdge thatEdge = that.graph.getEdge(source, target);
       if (thatEdge == null) {
         return false;
       }
