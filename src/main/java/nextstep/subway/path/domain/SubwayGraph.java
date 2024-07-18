@@ -1,6 +1,7 @@
 package nextstep.subway.path.domain;
 
 import lombok.ToString;
+import nextstep.subway.line.domain.Line;
 import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.station.domain.Station;
 import org.jgrapht.GraphPath;
@@ -38,6 +39,11 @@ public class SubwayGraph {
     if (!graph.containsVertex(upStation) || !graph.containsVertex(downStation)) {
       throw new IllegalArgumentException(STATION_NOT_FOUND);
     }
+  }
+
+  public void addLine(Line line) {
+    line.getStations().forEach(this::addStation);
+    line.getLineSections().getSections().forEach(this::addLineSection);
   }
 
   public Path getShortestPath(Station source, Station sink) {

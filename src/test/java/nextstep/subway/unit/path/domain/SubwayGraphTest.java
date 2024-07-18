@@ -3,6 +3,7 @@ package nextstep.subway.unit.path.domain;
 import static nextstep.subway.support.Fixtures.*;
 import static org.assertj.core.api.Assertions.*;
 
+import nextstep.subway.line.domain.Line;
 import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.path.domain.Path;
 import nextstep.subway.path.domain.SubwayGraph;
@@ -90,6 +91,24 @@ class SubwayGraphTest {
     LineSection section = LineSection.of(교대역, 강남역, 10);
     assertThatExceptionOfType(IllegalArgumentException.class)
         .isThrownBy(() -> graph.addLineSection(section));
+  }
+
+  @DisplayName("노선을 추가한다.")
+  @Test
+  void addLine() {
+    SubwayGraph graph = new SubwayGraph();
+    Line 이호선 = 이호선();
+
+    graph.addLine(이호선);
+
+    assertThat(
+        graph.isSame(
+            new SubwayGraph(
+                WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
+                        DefaultWeightedEdge.class)
+                    .addEdge(강남역, 역삼역(), 10)
+                    .build())))
+        .isTrue();
   }
 
   @Nested
