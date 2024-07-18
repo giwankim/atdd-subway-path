@@ -60,32 +60,15 @@ public class Fixtures {
         .build();
   }
 
-  public static Line 삼호선() {
-    return Line.builder()
-        .id(3L)
-        .name("3호선")
-        .color("bg-orange-600")
-        .lineSections(new LineSections(교대역(), 남부터미널역(), 2))
-        .build();
-  }
-
   public static LineSection 강남_역삼_구간() {
-    return LineSection.builder().id(1L).upStation(강남역()).downStation(역삼역()).distance(10).build();
+    return LineSection.builder().upStation(강남역()).downStation(역삼역()).distance(10).build();
   }
 
   public static LineSection 역삼_선릉_구간() {
-    return LineSection.builder().id(2L).upStation(역삼역()).downStation(선릉역()).distance(20).build();
+    return LineSection.builder().upStation(역삼역()).downStation(선릉역()).distance(20).build();
   }
 
   public static LineSection 강남_판교_구간() {
-    return LineSection.builder().id(3L).upStation(강남역()).downStation(판교역()).distance(20).build();
-  }
-
-  public static LineSection 교대_강남_구간() {
-    return LineSection.builder().id(4L).upStation(교대역()).downStation(강남역()).distance(10).build();
-  }
-
-  public static LineSection 강남_양재_구간() {
-    return LineSection.builder().id(5L).upStation(강남역()).downStation(양재역()).distance(10).build();
+    return LineSection.builder().upStation(강남역()).downStation(판교역()).distance(20).build();
   }
 }

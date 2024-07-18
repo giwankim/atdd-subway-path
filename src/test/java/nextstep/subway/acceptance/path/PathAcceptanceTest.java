@@ -7,6 +7,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import nextstep.subway.acceptance.AcceptanceTest;
 import nextstep.subway.line.domain.LineRepository;
+import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.line.domain.LineSections;
 import nextstep.subway.station.domain.Station;
 import nextstep.subway.station.domain.StationRepository;
@@ -39,34 +40,36 @@ class PathAcceptanceTest extends AcceptanceTest {
   @BeforeEach
   protected void setUp() {
     super.setUp();
+    Station 강남역 = stationRepository.save(강남역());
+    stationRepository.save(역삼역());
+    stationRepository.save(선릉역());
+    stationRepository.save(판교역());
     교대역 = stationRepository.save(교대역());
-    stationRepository.save(강남역());
-    stationRepository.save(남부터미널역());
+    Station 남부터미널 = stationRepository.save(남부터미널역());
     양재역 = stationRepository.save(양재역());
-    lineRepository.save(aLine().lineSections(new LineSections(교대_강남_구간())).build());
+    lineRepository.save(
+        aLine().lineSections(new LineSections(LineSection.of(교대역, 강남역, 10))).build());
     lineRepository.save(
         aLine()
-            .id(2L)
             .name("신분당선")
             .color("bg-red-600")
-            .lineSections(new LineSections(강남_양재_구간()))
+            .lineSections(new LineSections(LineSection.of(강남역, 양재역, 10)))
             .build());
-    lineRepository.save(삼호선());
+    lineRepository.save(
+        aLine()
+            .name("3호선")
+            .color("bg-orange-600")
+            .lineSections(
+                new LineSections(LineSection.of(교대역, 남부터미널, 2), LineSection.of(남부터미널, 양재역, 3)))
+            .build());
   }
 
-  /** When 출발역과 도착역으로 경로를 조회하면 Then 출발역부터 도탁역까지의 경로에 있는 역 목록이 조회된다. */
-  @DisplayName("지하철 경로에 있는 역 조회")
+  /** When 출발역과 도착역으로 경로를 조회하면 Then 출발역부터 도탁역까지의 경로와 거리가 조회된다. */
+  @DisplayName("지하철 경로 조회")
   @Test
   void shouldReturnShortestDistancePath() {
     ExtractableResponse<Response> response = 경로_조회_요청(교대역, 양재역);
     경로_역_목록_조회됨(response, "교대역", "남부터미널역", "양재역");
-  }
-
-  /** When 출발역과 도착역으로 경로를 조회하면 Then 출발역부터 도탁역까지의 경로 구간의 거리가 조회된다. */
-  @DisplayName("지하철 경로 거리 조회")
-  @Test
-  void shouldReturnShortestDistance() {
-    ExtractableResponse<Response> response = 경로_조회_요청(교대역, 양재역);
     경로_거리_조회됨(response, 5);
   }
 }
