@@ -102,12 +102,12 @@ class SubwayGraphTest {
     graph.addLine(이호선);
 
     assertThat(
-        graph.isSame(
-            new SubwayGraph(
-                WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
-                        DefaultWeightedEdge.class)
-                    .addEdge(강남역, 역삼역(), 10)
-                    .build())))
+            graph.isSame(
+                new SubwayGraph(
+                    WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
+                            DefaultWeightedEdge.class)
+                        .addEdge(강남역, 역삼역(), 10)
+                        .build())))
         .isTrue();
   }
 

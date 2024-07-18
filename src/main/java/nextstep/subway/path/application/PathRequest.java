@@ -11,4 +11,8 @@ public class PathRequest {
     this.source = source;
     this.target = target;
   }
+
+  public static PathRequest of(Long source, Long target) {
+    return new PathRequest(source, target);
+  }
 }
