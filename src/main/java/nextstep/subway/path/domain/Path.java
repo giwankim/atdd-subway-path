@@ -14,6 +14,10 @@ public class Path {
     this.totalDistance = totalDistance;
   }
 
+  static Path empty() {
+    return new Path(Collections.emptyList(), 0);
+  }
+
   public static Path of(List<Station> stations, long totalDistance) {
     return new Path(stations, totalDistance);
   }

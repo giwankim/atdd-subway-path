@@ -40,10 +40,14 @@ public class SubwayGraph {
     }
   }
 
-  public Path getShortestPath(Station source, Station target) {
+  public Path getShortestPath(Station source, Station sink) {
+    validate(source, sink);
     DijkstraShortestPath<Station, DefaultWeightedEdge> shortestPath =
         new DijkstraShortestPath<>(graph);
-    GraphPath<Station, DefaultWeightedEdge> path = shortestPath.getPath(source, target);
+    GraphPath<Station, DefaultWeightedEdge> path = shortestPath.getPath(source, sink);
+    if (path == null) {
+      return Path.empty();
+    }
     return Path.of(path.getVertexList(), (long) path.getWeight());
   }
 

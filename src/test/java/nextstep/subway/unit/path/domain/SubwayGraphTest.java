@@ -9,7 +9,9 @@ import nextstep.subway.path.domain.SubwayGraph;
 import nextstep.subway.station.domain.Station;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -71,13 +73,13 @@ class SubwayGraphTest {
     graph.addLineSection(LineSection.of(교대역, 강남역, 10));
 
     assertThat(
-        graph.isSame(
-            new SubwayGraph(
-                WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
-                        DefaultWeightedEdge.class)
-                    .addEdge(교대역, 강남역, 10)
-                    .addEdge(교대역, 강남역, 10)
-                    .build())))
+            graph.isSame(
+                new SubwayGraph(
+                    WeightedMultigraph.<Station, DefaultWeightedEdge>builder(
+                            DefaultWeightedEdge.class)
+                        .addEdge(교대역, 강남역, 10)
+                        .addEdge(교대역, 강남역, 10)
+                        .build())))
         .isTrue();
   }
 
@@ -90,22 +92,59 @@ class SubwayGraphTest {
         .isThrownBy(() -> graph.addLineSection(section));
   }
 
-  @DisplayName("최단 거리 경로를 조회한다.")
-  @Test
-  void getShortestPath() {
-    SubwayGraph graph = new SubwayGraph();
-    graph.addStation(교대역);
-    graph.addStation(강남역);
-    graph.addStation(양재역);
-    graph.addStation(남부터미널역);
-    graph.addLineSection(LineSection.of(교대역, 강남역, 10));
-    graph.addLineSection(LineSection.of(강남역, 양재역, 10));
-    graph.addLineSection(LineSection.of(교대역, 남부터미널역, 2));
-    graph.addLineSection(LineSection.of(남부터미널역, 양재역, 3));
+  @Nested
+  @DisplayName("최단 경로 조회 단위 테스트")
+  class ShortestPathTest {
+    private SubwayGraph graph;
 
-    Path path = graph.getShortestPath(교대역, 양재역);
+    @BeforeEach
+    void setUp() {
+      graph = new SubwayGraph();
+      graph.addStation(교대역);
+      graph.addStation(강남역);
+      graph.addStation(양재역);
+      graph.addStation(남부터미널역);
+      graph.addLineSection(LineSection.of(교대역, 강남역, 10));
+      graph.addLineSection(LineSection.of(강남역, 양재역, 10));
+      graph.addLineSection(LineSection.of(교대역, 남부터미널역, 2));
+      graph.addLineSection(LineSection.of(남부터미널역, 양재역, 3));
+    }
 
-    assertThat(path.getTotalDistance()).isEqualTo(5);
-    assertThat(path.getStations()).containsExactly(교대역, 남부터미널역, 양재역);
+    @DisplayName("최단 거리 경로를 조회한다.")
+    @Test
+    void getShortestPath() {
+      Path path = graph.getShortestPath(교대역, 양재역);
+
+      assertThat(path.getTotalDistance()).isEqualTo(5);
+      assertThat(path.getStations()).containsExactly(교대역, 남부터미널역, 양재역);
+    }
+
+    @DisplayName("출발역과 도착역이 같은 경우 역 하나만이 반환된다.")
+    @Test
+    void sourceAndSinkAreTheSame() {
+      Path path = graph.getShortestPath(교대역, 교대역);
+      assertThat(path.getTotalDistance()).isZero();
+      assertThat(path.getStations()).containsExactly(교대역);
+    }
+
+    @DisplayName("출발역과 도착역이 연결이 되어 있지 않은 경우")
+    @Test
+    void sourceAndSinkDisconnected() {
+      Station 판교역 = 판교역();
+      graph.addStation(판교역);
+
+      Path path = graph.getShortestPath(교대역, 판교역);
+
+      assertThat(path.getTotalDistance()).isZero();
+      assertThat(path.getStations()).isEmpty();
+    }
+
+    @DisplayName("출발역이나 도착역이 존재하지 않는 경우")
+    @Test
+    void sourceOrSinkNotExist() {
+      Station 판교역 = 판교역();
+      assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(() -> graph.getShortestPath(교대역, 판교역));
+    }
   }
 }
