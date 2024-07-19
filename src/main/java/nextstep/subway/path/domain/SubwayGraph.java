@@ -8,7 +8,8 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.WeightedMultigraph;
 
 public class SubwayGraph {
-  public static final String STATION_NOT_FOUND = "추가하는 구간의 상/하행역이 존재하지 않습니다.";
+  private static final String STATION_NOT_FOUND = "추가하는 구간의 상/하행역이 존재하지 않습니다.";
+  private static final double EPSILON = 10e-7;
 
   private final WeightedMultigraph<Station, LineSectionEdge> graph;
 
@@ -68,7 +69,7 @@ public class SubwayGraph {
       if (thatEdge == null) {
         return false;
       }
-      if (Math.abs(graph.getEdgeWeight(edge) - that.graph.getEdgeWeight(thatEdge)) > 10e-7) {
+      if (Math.abs(graph.getEdgeWeight(edge) - that.graph.getEdgeWeight(thatEdge)) > EPSILON) {
         return false;
       }
     }
