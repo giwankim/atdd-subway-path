@@ -1,6 +1,5 @@
 package nextstep.subway.path.domain;
 
-import lombok.ToString;
 import nextstep.subway.line.domain.Line;
 import nextstep.subway.line.domain.LineSection;
 import nextstep.subway.station.domain.Station;
@@ -8,7 +7,6 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.WeightedMultigraph;
 
-@ToString
 public class SubwayGraph {
   public static final String STATION_NOT_FOUND = "추가하는 구간의 상/하행역이 존재하지 않습니다.";
 
