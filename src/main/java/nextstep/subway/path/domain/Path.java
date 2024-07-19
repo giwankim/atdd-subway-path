@@ -9,12 +9,12 @@ public class Path {
   private final List<Station> stations;
   @Getter private final long totalDistance;
 
-  public Path(List<Station> stations, long totalDistance) {
+  private Path(List<Station> stations, long totalDistance) {
     this.stations = stations;
     this.totalDistance = totalDistance;
   }
 
-  static Path empty() {
+  public static Path empty() {
     return new Path(Collections.emptyList(), 0);
   }
 
